@@ -1,64 +1,55 @@
- // Create Web server application with Express
- const express = require('express');
- const bodyParser = require('body-parser');
- const app = express();
+ // Create Web server
+ 
+var express = require('express');
+var app = express();
+var fs = require('fs');
 
- // Use body-parser middleware to parse HTTP message body
- app.use(bodyParser.urlencoded({ extended: false }));
- app.use(bodyParser.json());
+// Create Web server
+var app = express();
 
- // Define HTTP GET method to get all comments
- app.get('/comments', (req, res) => {
-     res.json(comments);
- });
+// Set up handlebars view engine
+var handlebars = require('express3-handlebars')
+   .create({ defaultLayout:'main' });
+app.engine('handlebars', handlebars.engine);
+app.set('view engine', 'handlebars');
 
- // Define HTTP POST method to add a new comment
- app.post('/comments', (req, res) => {
-     const comment = {
-         id: comments.length + 1,
-         timestamp: Date.now(),
-         body: req.body.body,
-     };
-     comments.push(comment);
-     res.json(comment);
- });
+// Set up body-parser
+var bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
- // Define HTTP PUT method to update an existing comment
- app.put('/comments/:id', (req, res) => {
-     const id = parseInt(req.params.id, 10);
-     const comment = comments.filter(comment => comment.id === id)[0];
-     comment.body = req.body.body;
-     res.json(comment);
- });
+// Set up public directory
+app.use(express.static(__dirname + '/public'));
 
- // Define HTTP DELETE method to delete an existing comment
- app.delete('/comments/:id', (req, res) => {
-     const id = parseInt(req.params.id, 10);
-     const index = comments.findIndex(comment => comment.id === id);
-     comments.splice(index, 1);
-     res.status(204).send();
- });
+// Set up port
+app.set('port', process.env.PORT || 3000);
 
- // Start the server and listen on port 3000
- app.listen(3000, () => {
-     console.log('Server is running on port 3000');
- });
+// Set up database
+var mongoose = require('mongoose');
+var opts = {
+   server: {
+      socketOptions: { keepAlive: 1 }
+   }
+};
+switch(app.get('env')) {
+   case 'development':
+      mongoose.connect(credentials.mongo.development.connectionString, opts);
+      break;
+   case 'production':
+      mongoose.connect(credentials.mongo.production.connectionString, opts);
+      break;
+   default:
+      throw new Error('Unknown execution environment: ' + app.get('env'));
+}
 
- // Define an array to store comments
- const comments = [
-     {
-         id: 1,
-         timestamp: Date.now(),
-         body: 'First comment',
-     },
-     {
-         id: 2,
-         timestamp: Date.now(),
-         body: 'Second comment',
-     },
-     {
-         id: 3,
-         timestamp: Date.now(),
-         body: 'Third comment',
-     },
- ];
+// Set up database schema
+var Comment = require('./models/comment.js');
+
+// Set up database schema
+var User = require('./models/user.js');
+
+// Set up database schema
+var Post = require('./models/post.js');
+
+// Set up database schema
+var Comment = req
