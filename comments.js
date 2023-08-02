@@ -70,4 +70,5 @@
  // 2. create web server
  var server = http.createServer(function(request, response){
      // 3. set header
-     response.writeHead(200, {"Content-Type": "text/plain"});
+     response.writeHead(200, {"Content-Type": "text/plain"})
+ });
